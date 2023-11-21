@@ -29,7 +29,7 @@ axs[0].pie(df['Level'].value_counts(), labels=df['Level'].value_counts().index)
 axs[0].set_title('Distribucija nivoa ')
 
 axs[1].pie(df['Gender'].value_counts(), labels=df['Gender'].value_counts().index)
-axs[1].set_title('Distribucija polova')
+axs[1].set_title('Distribucij a polova')
 
 plt.tight_layout()
 plt.show()
