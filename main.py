@@ -33,7 +33,7 @@ print("Kategorije")
 cat_columns = df.select_dtypes(include=['object', 'category'])
 
 #Glavni parametri baze
-print(df.describe().T
+print(df.describe()).T
 
 print('Najmanje:')
 print(cat_columns.nunique().idxmin())
