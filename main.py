@@ -6,62 +6,78 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 
 #spremanje baze u df
-df = pd.read_csv('lungcancer.csv')
+df = pd.read_csv('heart_attack_prediction_dataset.csv')
+
+df.columns = df.columns.str.strip()
+
+#Problem ne prepoznaje kolonu Patiend ID
+#df = df.drop(columns=['Patient ID'])
 
 #shape baze
-print(df.shape)
+print("Uzoraka i obelezja ima: ", df.shape)
 print('\n\n')
 
+#kolone
+print("Kolone: ", df.columns)
+
+
+print("tipovi vrednosti===========")
+numeric_columns = df.select_dtypes(include=np.number)
+
+# Ukupan broj kolona
+total_numeric_columns = numeric_columns.shape[1]
+print('\n Broj')
+print(total_numeric_columns)
+
+print("Kategorije")
+cat_columns = df.select_dtypes(include=['object', 'category'])
+
 #Glavni parametri baze
-print(df.describe().T)
+print(df.describe().T
+
+print('Najmanje:')
+print(cat_columns.nunique().idxmin())
+print('')
+print('Najvise:')
+print(cat_columns.nunique().idxmax())
+
+print('')
+
+#8. pitanje
+procenat_po_klasi = df['Heart Attack Risk'].value_counts(normalize=True)
+
+print('Procentunalno po Klasi')
+print(round(100*procenat_po_klasi))
 
 #Provera da li ima null vrednosti
 nulls = df.isnull().sum().sort_values(ascending=False)
 print('Nulls: ', nulls) 
 #database ima 0 null vrednosti
 
-#Odbacivanje kolona sa nekorisnim podacima
-df.drop(['index', 'Patient Id'], inplace=True, axis = 1)
+#10. pitanje
 
-levelage = sns.FacetGrid(df, col = 'Level', height=4)
-levelage.map(sns.distplot, "Age")
+nevalidni = df.isna().any()
+print(nevalidni)
+
+
+print("Outliers")
+print("\n")
+
+plt.figure(figsize=(12, 8))
+sns.boxplot(data=df)
 plt.show()
 
-sea = sns.FacetGrid(df, col = 'Level', height=4)
-sea.map(sns.distplot, "Gender")
-plt.show()
+#15. pitanje
 
-#Plotovanje izlazne Level da bi se videlo koliko vrednosti pripada kojoj grupi
-
-plt.pie(df['Level'].value_counts(), labels=df['Level'].value_counts().index)
-plt.set_title('Distribucija nivoa')
-
-plt.tight_layout()
-plt.show()
-
-#Transformisanje objekt vrednosti u redne za izlaznu y - level
-level_mapping = {'High' : 3,
-                 'Medium': 2,
-                 'Low' : 1}
-
-df['Level'] = df['Level'].map(level_mapping)
-print("")
-
-#Gledanje korelisanih vrednosti, da bi znali koje kolone su korisne a koje ne
-corr = df.corr()
-f = plt.figure(figsize=(15, 9))
+correlacija = df.select_dtypes(include=np.number)
+corr = correlacija.corr()
 sns.heatmap(corr, annot=True)
 plt.show()
 
+#16. pitanje 
 
-#Izbacivanje izlazne iz skupa X za obuku i trening
-X = df.drop(['Level'], axis = 1)
-
-#Definisanje izlazne promenjive, y - nivo sanse da osoba ima kancer pluća
-y = df['Level']
-
-#Deljenje skupova X i y u skupove za trening i test,
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.1, random_state=1, shuffle=True)
-
-#vrstu modela koji primenjujemo na problem
-lr = LogisticRegression(fit_intercept=True)
+for feature in df.columns[:-1]:  # Izbacujemo poslednju kolonu koja je izlazna klasa (HeartDisease)
+    plt.figure(figsize=(8, 5))
+    sns.histplot(data=df, x=feature, hue='Heart Attack Risk', kde=True, alpha= 0.5)
+    plt.title(f'Histogram za {feature}')
+    plt.show()
